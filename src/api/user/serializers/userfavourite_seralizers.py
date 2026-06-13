@@ -1,17 +1,18 @@
 from rest_framework.serializers import ModelSerializer
-from apps.users.models import Favouriteplaylist
+from apps.users.models import Favourite
 
 
-class FavouriteplaylistListSeralizer(ModelSerializer):
+class FavouriteListSeralizer(ModelSerializer):
 
     class Meta:
-        model = Favouriteplaylist
+        model = Favourite
         fields = '__all__'
 
 
-class FavouriteplaylistCreateSeralizer(ModelSerializer):
+class FavouriteCreateSeralizer(ModelSerializer):
 
     class Meta:
-        model = Favouriteplaylist
+        model = Favourite
         fields = '__all__'
+
 

@@ -8,7 +8,7 @@ from apps.music.models import Playlist
 
 
 class PlaylistListApiView(ListAPIView):
-    queryset = Playlist.objects.all()
+    queryset = Playlist.objects.filter(is_public=True)
     serializer_class = playlist_seralizers.PlaylistListSeralizer
     permission_classes = [IsAuthenticated]
 
@@ -18,11 +18,41 @@ class PlaylistCreateAPIView(CreateAPIView):
     serializer_class = playlist_seralizers.PlaylistCreateSeralizer
     permission_classes = [IsAuthenticated]
 
+    def create(self, request):
+        data = request.data
+        data['author'] = request.user.id
+        ser = self.serializer_class(data=data)
+        if ser.is_valid(raise_exception=True):
+            ser.save()
+        return Response({
+            "msg": "Playlist created successfully",
+            "data": ser.data
+        }, status=status.HTTP_201_CREATED)
+
 
 class PlaylistUpdateAPIView(UpdateAPIView):
     queryset = Playlist.objects.all()
     serializer_class = playlist_seralizers.PlaylistCreateSeralizer
     permission_classes = [IsAuthenticated]
+
+    def partial_update(self, request, *args, **kwargs):
+        try:
+            request.data.pop("author")
+        except: pass
+        instance = self.get_object()
+        if request.user == instance.author:
+            request.data['author'] = request.user.id
+            ser = self.serializer_class(instance, data=request.data)
+            if ser.is_valid(raise_exception=True):
+                ser.save()
+            return Response({
+                "message": "ok",
+                "data": ser.data
+            },status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class PlaylistRetrieveAPIView(RetrieveAPIView):
@@ -30,9 +60,25 @@ class PlaylistRetrieveAPIView(RetrieveAPIView):
     serializer_class = playlist_seralizers.PlaylistListSeralizer
     permission_classes = [IsAuthenticated]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.user == instance.author:
+            return super().retrieve(request, *args, **kwargs)
+        elif instance.is_public:
+            return super().retrieve(request, *args, **kwargs)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 class PlaylistDestroyAPIView(DestroyAPIView):
     queryset = Playlist.objects.all()
     permission_classes = [IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        print("inst", instance.author)
+        if request.user == instance.author:
+            instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 

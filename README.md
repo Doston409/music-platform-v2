@@ -1,14 +1,34 @@
-# django-rest-music-platform
-
-
-pip install ziyodev-django
-ziyodev-django init .
-cd src/
-pip install -r requirements/dev.txt
-mkdir apps/music
-python manage.py startapp music apps/music
-
-modellarni yozasiz.
+# django-rest-music-platfor
 
 
 
+Pgainations
+
+Permissions (custom)
+Filtering
+Django filter
+Ordering fields
+Throotling
+AnonRateThrottle⁠, ⁠UserRateThrottle⁠
+Cacheing
+Docs: swagger
+Celery
+
+
+Testing
+ApiSchema
+
+Docker
+Elastic search
+
+
+domain
+cloudfare
+aws servers (nginx, server uses, gunicorn)
+
+Web Socket, FastAPI microservice websocket, Django channels
+FastAPI da api yozish
+
+GitLab
+Agile
+Vibecoding.

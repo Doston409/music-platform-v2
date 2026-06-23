@@ -1,6 +1,6 @@
 from rest_framework.generics import ListAPIView,\
     CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from api.user.serializers import playlist_seralizers
 from rest_framework import status
 from rest_framework.response import Response
@@ -10,7 +10,7 @@ from apps.music.models import Playlist
 class PlaylistListApiView(ListAPIView):
     queryset = Playlist.objects.filter(is_public=True)
     serializer_class = playlist_seralizers.PlaylistListSeralizer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     is_main = None
 
     def get_queryset(self):
@@ -69,7 +69,7 @@ class PlaylistUpdateAPIView(UpdateAPIView):
 class PlaylistRetrieveAPIView(RetrieveAPIView):
     queryset = Playlist.objects.all()
     serializer_class = playlist_seralizers.PlaylistListSeralizer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

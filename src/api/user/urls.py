@@ -1,9 +1,12 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from api.user.views import music_views, playlist_views, favourite_music, favourite_playlist_views
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from api.user.views import music_views, playlist_views, favourite_music, \
+    favourite_playlist_views, home_page_views
 
 router = DefaultRouter()
 router.include_root_view = False
+router.register(r"music-test", home_page_views.TestAPiViewset, basename="music-test")
 
 urlpatterns = [
     # music
@@ -26,11 +29,13 @@ urlpatterns = [
     path('favourite/delete/<int:pk>/', favourite_music.FavouriteDestroyAPIView.as_view()),
 
     # user favourite playlist
-    path('favourite-playlist/', favourite_playlist_views.FavouriteplaylistListApiView.as_view()),
-    path('favourite-playlist/create/', favourite_playlist_views.FavouriteplaylistCreateAPIView.as_view()),
-    path('favourite-playlist/delete/<int:pk>/', favourite_playlist_views.FavouriteplaylistDestroyAPIView.as_view()),
+    path('favourite-palylist/', favourite_playlist_views.FavouriteplaylistListApiView.as_view()),
+    path('favourite-palylist/create/', favourite_playlist_views.FavouriteplaylistCreateAPIView.as_view()),
+    path('favourite-palylist/delete/<int:pk>/', favourite_playlist_views.FavouriteplaylistDestroyAPIView.as_view()),
 
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
-    # path('', include(router.urls)),
+    path('', include(router.urls)),
     # path('restaurant/', RestaurantViewset.as_view({'get': 'list','post':'create'}), name='restaurant-detail'),
 ]

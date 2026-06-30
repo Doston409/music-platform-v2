@@ -1,14 +1,24 @@
 from rest_framework.generics import ListAPIView,\
     CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from api.user.serializers import music_seralizers
+from api.user.serializers import playlist_seralizers,music_seralizers
 from rest_framework import status
 from rest_framework.response import Response
 from apps.music.models import Music
+from rest_framework.viewsets import ModelViewSet
+from api.user.permissions import CustomPermissions
 
 
 
+class TestAPiViewset(ModelViewSet):
+    serializer_class = music_seralizers.MusicListSeralizer
+    queryset = Music.objects.all()
+    permission_classes = [IsAuthenticated,CustomPermissions]
 
+    def list(self, request, *args, **kwargs):
+        print(request.user)
+        return super().list(request, *args, **kwargs)
+    
 
 class HomeTopMusicListApiView(ListAPIView):
     queryset = Music.objects.filter(is_public=True)
@@ -23,7 +33,7 @@ class HomeTopMusicListApiView(ListAPIView):
 
 class HomeTopMusicListApiView(ListAPIView):
     queryset = Music.objects.filter(is_public=True)
-    serializer_class = music_seralizers.PlaylistSeralizers
+    serializer_class = playlist_seralizers.PlaylistListSeralizer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
@@ -32,16 +42,4 @@ class HomeTopMusicListApiView(ListAPIView):
 
 
 
-    #     if self.is_mine:
-    #         queryset =  Music.objects.filter(author=self.request.user)
-    #     if self.playlist:
-    #         try: playlist = list(map(lambda d: int(d), self.playlist.split(",")))
-    #         except: return []
-    #         queryset = queryset.filter(playlist__id__in=playlist).distinct()
-    #     return queryset
-
-    # def list(self, request, *args, **kwargs):
-    #     self.is_mine =  request.GET.get("is_mine", False)
-    #     self.playlist = request.GET.get("playlist", False)
-    #     return super().list(request, *args, **kwargs)
-
+ 
